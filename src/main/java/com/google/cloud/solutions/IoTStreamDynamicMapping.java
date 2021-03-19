@@ -39,6 +39,8 @@ public class IoTStreamDynamicMapping {
 
         processKnownMessages(pCollectionTuple.get(knownMessageTag));
         processUnknownMessages(pCollectionTuple.get(unknownMessageTag));
+
+        pipeline.run();
     }
 
     private static void processUnknownMessages(PCollection<PubsubMessage> unknownMessages) {
