@@ -1,0 +1,12 @@
+{
+  "cloudIoT.attr.deviceNumId": "DeviceNumId",
+  "cloudIoT.attr.deviceId": "DeviceId",
+  "cloudIoT.attr.registryId": "RegistryId",
+  "readings[]": {
+    "device": "Device",
+    "name": "MetricType",
+    "origin": "TimeStamp",
+    "value": "Value",
+    "valueType": "ValueType"
+  }
+}
