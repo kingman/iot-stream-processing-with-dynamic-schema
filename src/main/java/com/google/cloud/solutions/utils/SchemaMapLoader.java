@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class SchemaMapLoader {
     private static final Map<String, JsonObject> mapCache = new HashMap<>();
-    private static final String SCHEMA_MAP_METADATA_KEY = "schema-map";
+    private static final String SCHEMA_MAP_METADATA_PREFIX = "schema-map-";
 
     public static JsonObject getSchemaMap(IoTCoreMessageInfo messageInfo) {
         final String devicePath = getCacheKey(messageInfo);
@@ -19,7 +19,7 @@ public class SchemaMapLoader {
             return mapCache.get(devicePath);
         }
 
-        String mapStr = fetchMetadata(messageInfo, SCHEMA_MAP_METADATA_KEY);
+        String mapStr = fetchMetadata(messageInfo, SCHEMA_MAP_METADATA_PREFIX+messageInfo.getMessageType());
         if (mapStr == null) {
             throw new RuntimeException(String.format("No table scheme find for device: %s", devicePath));
         }
@@ -29,8 +29,8 @@ public class SchemaMapLoader {
     }
 
     private static String getCacheKey(IoTCoreMessageInfo messageInfo) {
-        return String.format("projects/%s/locations/%s/registries/%s/devices/%s", messageInfo.getProjectId(),
-                messageInfo.getDeviceRegistryLocation(), messageInfo.getDeviceRegistryId(), messageInfo.getDeviceId());
+        return String.format("projects/%s/locations/%s/registries/%s/devices/%s/%s", messageInfo.getProjectId(),
+                messageInfo.getDeviceRegistryLocation(), messageInfo.getDeviceRegistryId(), messageInfo.getDeviceId(), messageInfo.getMessageType());
 
     }
 

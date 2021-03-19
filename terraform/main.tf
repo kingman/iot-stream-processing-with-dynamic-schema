@@ -65,6 +65,7 @@ resource "google_cloudiot_device" "iot-device" {
 
   metadata = {
     input-data-schemas = file("../scripts/input-data-schema.json")
+    schema-map-edgex = file("../scripts/edgex-schema-mapping.json")
     table-schema-unknown-message = file("../scripts/unknown-message-table-schema.json")
     table-schema-edgex = file("../scripts/edgex-table-schema.json")
     destination-dataset-unknown-message=var.google_bigquery_dataset_id
