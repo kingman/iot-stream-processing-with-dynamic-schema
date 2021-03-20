@@ -8,6 +8,7 @@ public class PubSubMessageUtil {
 
     public static IoTCoreMessageInfo extractIoTCoreMessageInfo(PubsubMessage message) {
         IoTCoreMessageInfo messageInfo = new IoTCoreMessageInfo();
+        messageInfo.setMessageId(message.getMessageId());
         messageInfo.setDeviceNumId(message.getAttribute("deviceNumId"));
         messageInfo.setDeviceId(message.getAttribute("deviceId"));
         messageInfo.setDeviceRegistryId(message.getAttribute("deviceRegistryId"));

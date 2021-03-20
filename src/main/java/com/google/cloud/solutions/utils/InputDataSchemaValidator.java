@@ -36,7 +36,7 @@ public class InputDataSchemaValidator implements SerializableFunction<PubSubMess
         JSONObject messageToValidate;
 
         try {
-            messageToValidate = new JSONObject(new JSONTokener(new ByteArrayInputStream(messageWithInfo.getMessage().getPayload())));
+            messageToValidate = new JSONObject(new JSONTokener(new ByteArrayInputStream(messageWithInfo.getPayload())));
         } catch (Exception e) { //not valid json
             return false;
         }

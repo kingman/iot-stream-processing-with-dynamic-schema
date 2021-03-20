@@ -12,6 +12,7 @@ public class IoTCoreMessageInfo implements Serializable {
     private String projectId;
     private String subFolder;
     private String messageType;
+    private String messageId;
 
     public String getDeviceNumId() {
         return deviceNumId;
@@ -67,5 +68,13 @@ public class IoTCoreMessageInfo implements Serializable {
 
     public void setMessageType(String messageType) {
         this.messageType = messageType;
+    }
+
+    public String getMessageId() {
+        return messageId;
+    }
+
+    public void setMessageId(String messageId) {
+        this.messageId = messageId;
     }
 }

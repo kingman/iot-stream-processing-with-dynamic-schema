@@ -13,7 +13,7 @@ public class PubSubMessageToUnParsedMessage extends DoFn<PubSubMessageWithMessag
     public void processElement(@Element PubSubMessageWithMessageInfo message, OutputReceiver<UnParsedMessage> receiver) {
         UnParsedMessage unParsedMessage = new UnParsedMessage();
         unParsedMessage.setMessageInfo(message.getMessageInfo());
-        unParsedMessage.setMessage(new String(message.getMessage().getPayload()));
+        unParsedMessage.setMessage(new String(message.getPayload()));
         receiver.output(unParsedMessage);
     }
 }
