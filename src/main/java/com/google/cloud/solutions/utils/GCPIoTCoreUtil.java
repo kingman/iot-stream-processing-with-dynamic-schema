@@ -15,16 +15,17 @@ import com.google.api.services.cloudiot.v1.CloudIotScopes;
 import com.google.api.services.cloudiot.v1.model.Device;
 import com.google.auth.http.HttpCredentialsAdapter;
 import com.google.auth.oauth2.GoogleCredentials;
+import com.google.cloud.solutions.common.IoTCoreMessageInfo;
 import com.google.common.collect.ImmutableMap;
 
 public class GCPIoTCoreUtil {
-    private static final String APP_NAME = "enviro-processor";
+    private static final String APP_NAME = "dynamic-stream-processor";
 
     private static CloudIot service;
 
     private static String CREDENTIAL_PATH = "";
 
-    private static Map<String, Map<String, String>> metadataCache = new HashMap<>();
+    private static final Map<String, Map<String, String>> metadataCache = new HashMap<>();
 
     public static CloudIot getService() {
         if (service == null) {
@@ -56,8 +57,32 @@ public class GCPIoTCoreUtil {
         return credential.createScoped(CloudIotScopes.all());
     }
 
-    public static Map<String, String> getDeviceMetadata(String deviceId, String projectId, String cloudRegion,
-            String registryName) throws IOException {
+    public static String getMetaDataEntry(IoTCoreMessageInfo messageInfo, String entryKey) {
+        try {
+            return getDeviceMetadata(messageInfo).get(entryKey);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static String getDeviceCacheKey(IoTCoreMessageInfo messageInfo) {
+        return String.format("projects/%s/locations/%s/registries/%s/devices/%s", messageInfo.getProjectId(),
+                messageInfo.getDeviceRegistryLocation(), messageInfo.getDeviceRegistryId(), messageInfo.getDeviceId());
+    }
+
+    public static String getDeviceCacheKeyWithMessageType(IoTCoreMessageInfo messageInfo) {
+        return String.format("projects/%s/locations/%s/registries/%s/devices/%s/%s", messageInfo.getProjectId(),
+                messageInfo.getDeviceRegistryLocation(), messageInfo.getDeviceRegistryId(), messageInfo.getDeviceId(), messageInfo.getMessageType());
+    }
+
+    private static Map<String, String> getDeviceMetadata(IoTCoreMessageInfo messageInfo) throws IOException {
+        return getDeviceMetadata(messageInfo.getDeviceId(), messageInfo.getProjectId(),
+                messageInfo.getDeviceRegistryLocation(), messageInfo.getDeviceRegistryId());
+
+    }
+
+    private static Map<String, String> getDeviceMetadata(String deviceId, String projectId, String cloudRegion,
+                                                        String registryName) throws IOException {
         final String devicePath = String.format("projects/%s/locations/%s/registries/%s/devices/%s", projectId,
                 cloudRegion, registryName, deviceId);
         if (metadataCache.containsKey(devicePath)) {

@@ -2,15 +2,13 @@ package com.google.cloud.solutions.transformation;
 
 import com.google.api.services.bigquery.model.TableFieldSchema;
 import com.google.api.services.bigquery.model.TableRow;
-import com.google.cloud.solutions.common.IoTCoreMessageInfo;
+import com.google.cloud.solutions.common.PubSubMessageWithMessageInfo;
 import com.google.cloud.solutions.common.TableRowWithMessageInfo;
-import com.google.cloud.solutions.utils.PubSubMessageUtil;
 import com.google.cloud.solutions.utils.SchemaMapLoader;
 import com.google.cloud.solutions.utils.TableSchemaLoader;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.apache.beam.sdk.io.gcp.pubsub.PubsubMessage;
 import org.apache.beam.sdk.transforms.DoFn;
 import org.joda.time.Instant;
 
@@ -18,22 +16,21 @@ import org.joda.time.Instant;
 import java.util.*;
 import java.util.Map.Entry;
 
-public class PubSubMessageToTableRowMapper extends DoFn<PubsubMessage, TableRowWithMessageInfo> {
+public class PubSubMessageToTableRowMapper extends DoFn<PubSubMessageWithMessageInfo, TableRowWithMessageInfo> {
     private static final String IOT_CORE_ATTRIBUTE_PREFIX = "cloudIoT.attr.";
 
     @ProcessElement
-    public void processElement(@Element PubsubMessage message, OutputReceiver<TableRowWithMessageInfo> receiver) {
-        IoTCoreMessageInfo messageInfo = PubSubMessageUtil.extractIoTCoreMessageInfo(message);
-        Map<String, String> attributeMap = message.getAttributeMap();
-        JsonObject payloadJson = new JsonParser().parse(new String(message.getPayload())).getAsJsonObject();
-        JsonObject schemaMap = SchemaMapLoader.getSchemaMap(messageInfo);
-        Map<String, TableFieldSchema> tableSchema = TableSchemaLoader.getFieldMap(messageInfo);
+    public void processElement(@Element PubSubMessageWithMessageInfo message, OutputReceiver<TableRowWithMessageInfo> receiver) {
+        Map<String, String> attributeMap = message.getMessage().getAttributeMap();
+        JsonObject payloadJson = new JsonParser().parse(new String(message.getMessage().getPayload())).getAsJsonObject();
+        JsonObject schemaMap = SchemaMapLoader.getSchemaMap(message.getMessageInfo());
+        Map<String, TableFieldSchema> tableSchema = TableSchemaLoader.getFieldMap(message.getMessageInfo());
         List<Map<String, String>> rows = new ArrayList<>();
         Map<String, String> rowValues = new HashMap<>();
         rows.add(rowValues);
         parsePayload(payloadJson, schemaMap, attributeMap, rows);
         for(Map<String, String> row : rows) {
-            receiver.output(new TableRowWithMessageInfo(messageInfo, toTableRow(row, tableSchema)));
+            receiver.output(new TableRowWithMessageInfo(message.getMessageInfo(), toTableRow(row, tableSchema)));
         }
     }
 

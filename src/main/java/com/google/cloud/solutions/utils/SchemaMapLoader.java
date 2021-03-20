@@ -13,35 +13,19 @@ public class SchemaMapLoader {
     private static final String SCHEMA_MAP_METADATA_PREFIX = "schema-map-";
 
     public static JsonObject getSchemaMap(IoTCoreMessageInfo messageInfo) {
-        final String devicePath = getCacheKey(messageInfo);
+        final String cacheKey = GCPIoTCoreUtil.getDeviceCacheKeyWithMessageType(messageInfo);
 
-        if (mapCache.containsKey(devicePath)) {
-            return mapCache.get(devicePath);
+        if (mapCache.containsKey(cacheKey)) {
+            return mapCache.get(cacheKey);
         }
 
-        String mapStr = fetchMetadata(messageInfo, SCHEMA_MAP_METADATA_PREFIX+messageInfo.getMessageType());
+        String mapStr = GCPIoTCoreUtil.getMetaDataEntry(
+                messageInfo, SCHEMA_MAP_METADATA_PREFIX+messageInfo.getMessageType());
         if (mapStr == null) {
-            throw new RuntimeException(String.format("No table scheme find for device: %s", devicePath));
+            throw new RuntimeException(String.format("No table scheme find for device: %s", cacheKey));
         }
         JsonObject map = new JsonParser().parse(mapStr).getAsJsonObject();
-        mapCache.put(devicePath, map);
-        return mapCache.get(devicePath);
-    }
-
-    private static String getCacheKey(IoTCoreMessageInfo messageInfo) {
-        return String.format("projects/%s/locations/%s/registries/%s/devices/%s/%s", messageInfo.getProjectId(),
-                messageInfo.getDeviceRegistryLocation(), messageInfo.getDeviceRegistryId(), messageInfo.getDeviceId(), messageInfo.getMessageType());
-
-    }
-
-    private static String fetchMetadata(IoTCoreMessageInfo messageInfo, String metadataKey) {
-        try {
-            return GCPIoTCoreUtil
-                    .getDeviceMetadata(messageInfo.getDeviceId(), messageInfo.getProjectId(),
-                            messageInfo.getDeviceRegistryLocation(), messageInfo.getDeviceRegistryId())
-                    .get(metadataKey);
-        } catch (Exception e) {
-            return null;
-        }
+        mapCache.put(cacheKey, map);
+        return mapCache.get(cacheKey);
     }
 }

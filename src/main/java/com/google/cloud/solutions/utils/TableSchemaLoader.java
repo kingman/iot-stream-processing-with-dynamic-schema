@@ -21,58 +21,45 @@ public class TableSchemaLoader {
     private static final Map<String, Map<String, TableFieldSchema>> fieldMapCache = new HashMap<>();
 
     public static TableSchema getSchema(IoTCoreMessageInfo messageInfo) {
-        final String devicePath = getCacheKey(messageInfo);
+        final String cacheKey = GCPIoTCoreUtil.getDeviceCacheKeyWithMessageType(messageInfo);
 
-        if (schemaCache.containsKey(devicePath)) {
-            return schemaCache.get(devicePath);
+        if (schemaCache.containsKey(cacheKey)) {
+            return schemaCache.get(cacheKey);
         }
 
-        String schemaStr = fetchMetadata(messageInfo, TABLE_SCHEMA_METADATA_PREFIX+messageInfo.getMessageType());
+        String schemaStr = GCPIoTCoreUtil.getMetaDataEntry(
+                messageInfo, TABLE_SCHEMA_METADATA_PREFIX+messageInfo.getMessageType());
         if (schemaStr == null) {
-            throw new RuntimeException(String.format("No table scheme find for device: %s", devicePath));
+            throw new RuntimeException(String.format("No table scheme find for device: %s", cacheKey));
         }
         TableSchema schema = createScheme(schemaStr);
-        schemaCache.put(devicePath, schema);
-        return schemaCache.get(devicePath);
+        schemaCache.put(cacheKey, schema);
+        return schemaCache.get(cacheKey);
 
     }
 
     public static Map<String, TableFieldSchema> getFieldMap(IoTCoreMessageInfo messageInfo) {
-        final String devicePath = getCacheKey(messageInfo);
+        final String cacheKey = GCPIoTCoreUtil.getDeviceCacheKeyWithMessageType(messageInfo);
 
-        if (fieldMapCache.containsKey(devicePath)) {
-            return fieldMapCache.get(devicePath);
+        if (fieldMapCache.containsKey(cacheKey)) {
+            return fieldMapCache.get(cacheKey);
         }
-        String schemaStr = fetchMetadata(messageInfo, TABLE_SCHEMA_METADATA_PREFIX+messageInfo.getMessageType());
+
+        String schemaStr = GCPIoTCoreUtil.getMetaDataEntry(
+                messageInfo, TABLE_SCHEMA_METADATA_PREFIX+messageInfo.getMessageType());
         if (schemaStr == null) {
-            throw new RuntimeException(String.format("No table scheme find for device: %s", devicePath));
+            throw new RuntimeException(String.format("No table scheme find for device: %s", cacheKey));
         }
+
         JsonArray fields = new JsonParser().parse(schemaStr).getAsJsonArray();
         List<TableFieldSchema> fieldSchemas = createFieldSchemaList(fields);
         Map<String, TableFieldSchema> fieldMap = new HashMap<>();
         for(TableFieldSchema tableFieldSchema : fieldSchemas) {
             fieldMap.put(tableFieldSchema.getName(), tableFieldSchema);
         }
-        fieldMapCache.put(devicePath, fieldMap);
-        return fieldMapCache.get(devicePath);
+        fieldMapCache.put(cacheKey, fieldMap);
+        return fieldMapCache.get(cacheKey);
 
-    }
-
-    private static String getCacheKey(IoTCoreMessageInfo messageInfo) {
-        return String.format("projects/%s/locations/%s/registries/%s/devices/%s/%s", messageInfo.getProjectId(),
-                messageInfo.getDeviceRegistryLocation(), messageInfo.getDeviceRegistryId(), messageInfo.getDeviceId(), messageInfo.getMessageType());
-
-    }
-
-    private static String fetchMetadata(IoTCoreMessageInfo messageInfo, String metadataKey) {
-        try {
-            return GCPIoTCoreUtil
-                    .getDeviceMetadata(messageInfo.getDeviceId(), messageInfo.getProjectId(),
-                            messageInfo.getDeviceRegistryLocation(), messageInfo.getDeviceRegistryId())
-                    .get(metadataKey);
-        } catch (Exception e) {
-            return null;
-        }
     }
 
     private static TableSchema createScheme(String schemaStr) {
