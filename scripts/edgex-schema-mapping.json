@@ -1,7 +1,7 @@
 {
   "cloudIoT.attr.deviceNumId": "DeviceNumId",
   "cloudIoT.attr.deviceId": "DeviceId",
-  "cloudIoT.attr.registryId": "RegistryId",
+  "cloudIoT.attr.deviceRegistryId": "RegistryId",
   "readings[]": {
     "device": "Device",
     "name": "MetricType",
