@@ -1,24 +1,23 @@
 package com.google.cloud.solutions.common;
 
-import com.google.api.services.bigquery.model.TableRow;
-
 import java.io.Serializable;
+import java.util.Map;
 
 public class TableRowWithMessageInfo implements Serializable {
     private static final long serialVersionUID = 5038761469411530015L;
     private final IoTCoreMessageInfo messageInfo;
-    private final TableRow tableRow;
+    private final Map<String, String> tableRowMap;
 
-    public TableRowWithMessageInfo(final IoTCoreMessageInfo messageInfo, final TableRow tableRow) {
+    public TableRowWithMessageInfo(final IoTCoreMessageInfo messageInfo, final Map<String, String> tableRowMap) {
         this.messageInfo = messageInfo;
-        this.tableRow = tableRow;
+        this.tableRowMap = tableRowMap;
     }
 
     public IoTCoreMessageInfo getMessageInfo() {
         return messageInfo;
     }
 
-    public TableRow getTableRow() {
-        return tableRow;
+    public Map<String, String> getTableRowMap() {
+        return tableRowMap;
     }
 }
