@@ -64,8 +64,7 @@ def generate_payload(counter):
         "readings":[
             generate_single_measurement(id, now, device_name, "Pressure", pressure_val, value_type_str),
             generate_single_measurement(id, now, device_name, "Temperature", temperature_val, value_type_str),
-            generate_single_measurement(id, now, device_name, "Level", level_val, value_type_str),
-            generate_single_measurement(id, now, device_name, "Humidity", pressure_val, value_type_str)
+            generate_single_measurement(id, now, device_name, "Level", level_val, value_type_str)
         ]
     }
 
