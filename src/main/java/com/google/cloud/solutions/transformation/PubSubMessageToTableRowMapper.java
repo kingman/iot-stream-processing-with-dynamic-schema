@@ -68,9 +68,9 @@ public class PubSubMessageToTableRowMapper extends DoFn<PubSubMessageWithMessage
                         parsePayload(payloadArrayItem, mapKey.getAsJsonObject(), messageInfo, rowsCopy);
                         rowsHolder.addAll(rowsCopy);
                     }
-                    rows.clear();
-                    rows.addAll(rowsHolder);
                 }
+                rows.clear();
+                rows.addAll(rowsHolder);
             } else {
                 for(Map<String, String> rowValues : rows) {
                     rowValues.put(mapKey.getAsString(), payloadJson.get(keys[0]).getAsString());
