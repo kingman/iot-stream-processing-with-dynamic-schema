@@ -59,26 +59,39 @@ resource "google_cloudiot_registry" "device-registry" {
   }
 }
 
+locals {
+  metadata_table_schemas = {
+    for dataType in var.data_type_configuration:
+      dataType.schema_key=>file(dataType.schema_path)
+  }
+
+  metadata_destination_datasets = {
+    for dataType in var.data_type_configuration:
+      dataType.dataset_key=>dataType.destination_dataset
+  }
+
+  metadata_destination_tables = {
+    for dataType in var.data_type_configuration:
+      dataType.table_key=>dataType.destination_table
+  }
+
+  metadata_schema_maps = {
+    for dataType in var.data_type_configuration:
+      dataType.schema_map_key=>file(dataType.schema_map_path)
+    if dataType.id != "unknown-message"
+  }
+
+  metadata_input_data_schemas = {
+    input-data-schemas = file(var.input_data_schemas_path)
+  }
+
+  iot_device_metadata = merge(local.metadata_table_schemas, local.metadata_destination_tables, local.metadata_destination_datasets, local.metadata_schema_maps, local.metadata_input_data_schemas)
+}
+
 resource "google_cloudiot_device" "iot-device" {
   name     = var.google_iot_device_id
   registry = google_cloudiot_registry.device-registry.id
-
-  metadata = {
-    destination-dataset-unknown-message=var.google_bigquery_dataset_id
-    destination-table-unknown-message=var.google_bigquery_unknown_message_table_id
-    table-schema-unknown-message = file("../scripts/unknown-message-table-schema.json")
-
-    input-data-schemas = file("../scripts/input-data-schema.json")
-
-    destination-dataset-edgex=var.google_bigquery_dataset_id
-    destination-table-edgex=var.google_bigquery_metrics_table_id
-    table-schema-edgex = file("../scripts/edgex-table-schema.json")
-    schema-map-edgex = file("../scripts/edgex-schema-mapping.json")
-  }
-
-  depends_on = [
-      google_cloudiot_registry.device-registry
-  ]
+  metadata = local.iot_device_metadata
 }
 
 resource "google_bigquery_dataset" "dataset" {

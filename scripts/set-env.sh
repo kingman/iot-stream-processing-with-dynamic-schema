@@ -28,4 +28,4 @@ export IOT_DEVICE_ID=device-one
 export DATAFLOW_TEMPLATE_BUCKET=stream-processing-${GOOGLE_CLOUD_PROJECT}
 export BIGQUERY_DATASET_ID=iot_event
 export BIGQUERY_METRICS_TABLE_ID=message
-export BIGQUERY_UNKNOWN_MESSAGE_TABLE_ID=unkown_message
+export BIGQUERY_UNKNOWN_MESSAGE_TABLE_ID=unknown_message

@@ -151,6 +151,8 @@ else
     else
         GOOGLE_BIGQUERY_REGION="us-west2"
     fi
+    UNKNOWN_MESSAGE_TYPE_ID="unknown-message"
+    EDGEX_MESSAGE_TYPE_ID="edgex"
     tee "${TERRAFORM_VARIABEL_FILE_PATH}" <<EOF
 google_project_id="${GOOGLE_CLOUD_PROJECT}"
 google_default_region="${GOOGLE_CLOUD_REGION}"
@@ -159,8 +161,31 @@ google_iot_registry_id="${IOT_REGISTRY_ID}"
 google_iot_device_id="${IOT_DEVICE_ID}"
 google_bigquery_default_region="${GOOGLE_BIGQUERY_REGION}"
 google_bigquery_dataset_id="${BIGQUERY_DATASET_ID}"
-google_bigquery_metrics_table_id="${BIGQUERY_METRICS_TABLE_ID}"
-google_bigquery_unknown_message_table_id="${BIGQUERY_UNKNOWN_MESSAGE_TABLE_ID}"
 google_dataflow_default_bucket="${DATAFLOW_TEMPLATE_BUCKET}"
+input_data_schemas_path="../scripts/input-data-schema.json"
+data_type_configuration = [
+  {
+    id = "${UNKNOWN_MESSAGE_TYPE_ID}"
+    schema_key = "table-schema-${UNKNOWN_MESSAGE_TYPE_ID}"
+    dataset_key = "destination-dataset-${UNKNOWN_MESSAGE_TYPE_ID}"
+    table_key = "destination-table-${UNKNOWN_MESSAGE_TYPE_ID}"
+    schema_map_key = ""
+    schema_path = "../scripts/${UNKNOWN_MESSAGE_TYPE_ID}-table-schema.json"
+    destination_table = "${BIGQUERY_UNKNOWN_MESSAGE_TABLE_ID}"
+    destination_dataset = "${BIGQUERY_DATASET_ID}"
+    schema_map_path = ""
+  },
+  {
+    id = "${EDGEX_MESSAGE_TYPE_ID}"
+    schema_key = "table-schema-${EDGEX_MESSAGE_TYPE_ID}"
+    dataset_key = "destination-dataset-${EDGEX_MESSAGE_TYPE_ID}"
+    table_key = "destination-table-${EDGEX_MESSAGE_TYPE_ID}"
+    schema_map_key = "schema-map-${EDGEX_MESSAGE_TYPE_ID}"
+    schema_path = "../scripts/${EDGEX_MESSAGE_TYPE_ID}-table-schema.json"
+    destination_table = "${BIGQUERY_METRICS_TABLE_ID}"
+    destination_dataset = "${BIGQUERY_DATASET_ID}"
+    schema_map_path = "../scripts/${EDGEX_MESSAGE_TYPE_ID}-schema-mapping.json"
+  }
+]
 EOF
 fi
