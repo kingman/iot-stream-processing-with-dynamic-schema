@@ -1,5 +1,6 @@
 package com.google.cloud.solutions.utils;
 
+import com.google.cloud.solutions.common.IoTCoreMessageInfo;
 import com.google.cloud.solutions.common.PubSubMessageWithMessageInfo;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -21,6 +22,7 @@ public class InputDataSchemaValidator implements SerializableFunction<PubSubMess
     private static final String INPUT_DATA_SCHEMA_META_DATA_KEY = "input-data-schemas";
     private static final String SCHEMA_FIELD = "schema";
     private static final String DATA_TYPE_FIELD = "dataType";
+    private static boolean VALIDATION_NOT_FAILED_SO_FAR = true;
     private final Map<String, Map<String, Schema>> schemaCache;
 
     public InputDataSchemaValidator() {
@@ -48,8 +50,32 @@ public class InputDataSchemaValidator implements SerializableFunction<PubSubMess
                 return true;
             } catch (ValidationException ignored) {} //do not match schema requirement
         }
+
+        if (VALIDATION_NOT_FAILED_SO_FAR) { //indication on new message type added, need to clear cache
+            VALIDATION_NOT_FAILED_SO_FAR = false;
+            clearCache(messageWithInfo.getMessageInfo());
+            boolean isValidMessage = apply(messageWithInfo);
+            if(isValidMessage) {
+                clearLoaderCache(messageWithInfo.getMessageInfo());
+                VALIDATION_NOT_FAILED_SO_FAR = true;
+            }
+            return isValidMessage;
+        }
         return false;
     }
+
+    private void clearCache(IoTCoreMessageInfo messageInfo) {
+        final String cacheKey = GCPIoTCoreUtil.getDeviceCacheKey(messageInfo);
+        GCPIoTCoreUtil.clearDeviceMetaDataCache(messageInfo);
+        schemaCache.remove(cacheKey);
+    }
+
+    private void clearLoaderCache(IoTCoreMessageInfo messageInfo) {
+        SchemaMapLoader.clearCache(messageInfo);
+        TableDestinationLoader.clearCache(messageInfo);
+        TableDestinationLoader.clearCache(messageInfo);
+    }
+
 
     private Map<String, Schema> getSchemaList(PubSubMessageWithMessageInfo message) {
         final String cacheKey = GCPIoTCoreUtil.getDeviceCacheKey(message.getMessageInfo());

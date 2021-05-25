@@ -62,6 +62,12 @@ public class TableSchemaLoader {
 
     }
 
+    public static void clearCache(IoTCoreMessageInfo messageInfo) {
+        final String cacheKey = GCPIoTCoreUtil.getDeviceCacheKeyWithMessageType(messageInfo);
+        schemaCache.remove(cacheKey);
+        fieldMapCache.remove(cacheKey);
+    }
+
     private static TableSchema createScheme(String schemaStr) {
         JsonArray fields = new JsonParser().parse(schemaStr).getAsJsonArray();
         List<TableFieldSchema> fieldSchemas = createFieldSchemaList(fields);

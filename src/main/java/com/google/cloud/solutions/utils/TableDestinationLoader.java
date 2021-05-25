@@ -39,4 +39,9 @@ public class TableDestinationLoader {
 
         return destinationCache.get(cacheKey);
     }
+
+    public static void clearCache(IoTCoreMessageInfo messageInfo) {
+        final String cacheKey = GCPIoTCoreUtil.getDeviceCacheKeyWithMessageType(messageInfo);
+        destinationCache.remove(cacheKey);
+    }
 }

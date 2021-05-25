@@ -28,4 +28,9 @@ public class SchemaMapLoader {
         mapCache.put(cacheKey, map);
         return mapCache.get(cacheKey);
     }
+
+    public static void clearCache(IoTCoreMessageInfo messageInfo) {
+        final String cacheKey = GCPIoTCoreUtil.getDeviceCacheKeyWithMessageType(messageInfo);
+        mapCache.remove(cacheKey);
+    }
 }

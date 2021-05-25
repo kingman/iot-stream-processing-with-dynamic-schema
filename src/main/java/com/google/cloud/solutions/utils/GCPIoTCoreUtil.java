@@ -75,6 +75,11 @@ public class GCPIoTCoreUtil {
                 messageInfo.getDeviceRegistryLocation(), messageInfo.getDeviceRegistryId(), messageInfo.getDeviceId(), messageInfo.getMessageType());
     }
 
+    public static void clearDeviceMetaDataCache(IoTCoreMessageInfo messageInfo) {
+        final String cacheKey = getDeviceCacheKey(messageInfo);
+        metadataCache.remove(cacheKey);
+    }
+
     private static Map<String, String> getDeviceMetadata(IoTCoreMessageInfo messageInfo) throws IOException {
         return getDeviceMetadata(messageInfo.getDeviceId(), messageInfo.getProjectId(),
                 messageInfo.getDeviceRegistryLocation(), messageInfo.getDeviceRegistryId());
