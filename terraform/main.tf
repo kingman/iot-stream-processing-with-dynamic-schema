@@ -64,14 +64,16 @@ resource "google_cloudiot_device" "iot-device" {
   registry = google_cloudiot_registry.device-registry.id
 
   metadata = {
-    input-data-schemas = file("../scripts/input-data-schema.json")
-    schema-map-edgex = file("../scripts/edgex-schema-mapping.json")
-    table-schema-unknown-message = file("../scripts/unknown-message-table-schema.json")
-    table-schema-edgex = file("../scripts/edgex-table-schema.json")
     destination-dataset-unknown-message=var.google_bigquery_dataset_id
     destination-table-unknown-message=var.google_bigquery_unknown_message_table_id
+    table-schema-unknown-message = file("../scripts/unknown-message-table-schema.json")
+
+    input-data-schemas = file("../scripts/input-data-schema.json")
+
     destination-dataset-edgex=var.google_bigquery_dataset_id
     destination-table-edgex=var.google_bigquery_metrics_table_id
+    table-schema-edgex = file("../scripts/edgex-table-schema.json")
+    schema-map-edgex = file("../scripts/edgex-schema-mapping.json")
   }
 
   depends_on = [

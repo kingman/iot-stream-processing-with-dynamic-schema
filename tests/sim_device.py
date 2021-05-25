@@ -18,17 +18,29 @@ from datetime import datetime
 import itertools
 import logging
 import math
+import sys
 import uuid
 
 logger = logging.getLogger(__name__)
 
 def main():
+    number_of_msg = 1000
+    generate_person_detection_mgs = False
+    if len(sys.argv) > 1 and sys.argv[1] == 'person_detection_msg':
+        generate_person_detection_mgs = True
+        number_of_msg = 50
     with CloudIot() as cloud:
-        print("Sending simulated event message to Cloud IoT Core.")
+        if generate_person_detection_mgs:
+            print("Sending simulated person detection messages to Cloud IoT Core.")
+        else:
+            print("Sending simulated event messages to Cloud IoT Core.")
         for counter in itertools.count():
-            cloud.publish_message(generate_payload(counter))
+            if generate_person_detection_mgs:
+                cloud.publish_message(generate_detection(counter))
+            else:
+                cloud.publish_message(generate_payload(counter))
             sleep(1)
-            if counter > 1000:
+            if counter > number_of_msg:
                 exit(0)
 
 def generate_sin_val(max, min, cycle, counter):
@@ -65,6 +77,22 @@ def generate_payload(counter):
             generate_single_measurement(id, now, device_name, "Pressure", pressure_val, value_type_str),
             generate_single_measurement(id, now, device_name, "Temperature", temperature_val, value_type_str),
             generate_single_measurement(id, now, device_name, "Level", level_val, value_type_str)
+        ]
+    }
+
+def generate_detection(counter):
+    now = int(datetime.now().timestamp()*1000000)
+    return {
+        "person_detection": [
+            {
+                "ts": now,
+                "label": "person",
+                "score": 42+counter,
+                "detection_x1": 3+counter,
+                "detection_x2": 640+counter,
+                "detection_y1": 43+counter,
+                "detection_y2": 474+counter
+            }
         ]
     }
 
