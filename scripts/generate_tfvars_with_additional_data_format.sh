@@ -21,13 +21,13 @@ fi
 
 TERRAFORM_VARIABLE_FILE_PATH=terraform/new_data_format.tfvars
 if [ ! -f "${TERRAFORM_VARIABLE_FILE_PATH}" ]; then
-  SCRIPTS_DIR_RELATIVE_PATH="../scripts/"
+  CONFIGS_DIR_RELATIVE_PATH="../data-configs/"
   UNKNOWN_MESSAGE_TYPE_ID="unknown-message"
   EDGEX_MESSAGE_TYPE_ID="edgex"
   PERSON_DETECTION_MESSAGE_TYPE_ID="person-detection"
 
   tee "${TERRAFORM_VARIABLE_FILE_PATH}" <<EOF
-input_data_schemas_path="${SCRIPTS_DIR_RELATIVE_PATH}input-data-schema-update.json"
+input_data_schemas_path="${CONFIGS_DIR_RELATIVE_PATH}input-data-schema-update.json"
 data_type_configuration = [
   {
     id = "${UNKNOWN_MESSAGE_TYPE_ID}"
@@ -35,7 +35,7 @@ data_type_configuration = [
     dataset_key = "destination-dataset-${UNKNOWN_MESSAGE_TYPE_ID}"
     table_key = "destination-table-${UNKNOWN_MESSAGE_TYPE_ID}"
     schema_map_key = ""
-    schema_path = "${SCRIPTS_DIR_RELATIVE_PATH}${UNKNOWN_MESSAGE_TYPE_ID}-table-schema.json"
+    schema_path = "${CONFIGS_DIR_RELATIVE_PATH}${UNKNOWN_MESSAGE_TYPE_ID}-table-schema.json"
     destination_table = "${BIGQUERY_UNKNOWN_MESSAGE_TABLE_ID}"
     destination_dataset = "${BIGQUERY_DATASET_ID}"
     schema_map_path = ""
@@ -46,10 +46,10 @@ data_type_configuration = [
     dataset_key = "destination-dataset-${EDGEX_MESSAGE_TYPE_ID}"
     table_key = "destination-table-${EDGEX_MESSAGE_TYPE_ID}"
     schema_map_key = "schema-map-${EDGEX_MESSAGE_TYPE_ID}"
-    schema_path = "${SCRIPTS_DIR_RELATIVE_PATH}${EDGEX_MESSAGE_TYPE_ID}-table-schema.json"
+    schema_path = "${CONFIGS_DIR_RELATIVE_PATH}${EDGEX_MESSAGE_TYPE_ID}-table-schema.json"
     destination_table = "${BIGQUERY_METRICS_TABLE_ID}"
     destination_dataset = "${BIGQUERY_DATASET_ID}"
-    schema_map_path = "${SCRIPTS_DIR_RELATIVE_PATH}${EDGEX_MESSAGE_TYPE_ID}-schema-mapping.json"
+    schema_map_path = "${CONFIGS_DIR_RELATIVE_PATH}${EDGEX_MESSAGE_TYPE_ID}-schema-mapping.json"
   },
   {
     id = "${PERSON_DETECTION_MESSAGE_TYPE_ID}"
@@ -57,10 +57,10 @@ data_type_configuration = [
     dataset_key = "destination-dataset-${PERSON_DETECTION_MESSAGE_TYPE_ID}"
     table_key = "destination-table-${PERSON_DETECTION_MESSAGE_TYPE_ID}"
     schema_map_key = "schema-map-${PERSON_DETECTION_MESSAGE_TYPE_ID}"
-    schema_path = "${SCRIPTS_DIR_RELATIVE_PATH}${PERSON_DETECTION_MESSAGE_TYPE_ID}-table-schema.json"
+    schema_path = "${CONFIGS_DIR_RELATIVE_PATH}${PERSON_DETECTION_MESSAGE_TYPE_ID}-table-schema.json"
     destination_table = "${BIGQUERY_PERSON_DETECTION_TABLE_ID}"
     destination_dataset = "${BIGQUERY_DATASET_ID}"
-    schema_map_path = "${SCRIPTS_DIR_RELATIVE_PATH}${PERSON_DETECTION_MESSAGE_TYPE_ID}-schema-mapping.json"
+    schema_map_path = "${CONFIGS_DIR_RELATIVE_PATH}${PERSON_DETECTION_MESSAGE_TYPE_ID}-schema-mapping.json"
   }
 ]
 EOF
