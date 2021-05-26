@@ -7,4 +7,5 @@
 /target
 **/Test.java
 backend.tf
-terraform.tfvars
+*.tfvars
+experiment-canvas*
