@@ -1,8 +1,7 @@
-# iot-stream-processing-with-dynamic-schema
-Sample code to run stream processing in Apache Beam with dynamic schema loading from Google Cloud IoT Core.
+# Dynamic data processor for IoT event stream ingestion
 
+This repository holds source code for the reference implementation of the dynamic data processor explained in [Dynamic Schema Mapping for IoT streaming ingestion]() reference guide.  
 
-Execute following steps to run this sample.
 
 ## Get the tutorial source code in Cloud Shell
 

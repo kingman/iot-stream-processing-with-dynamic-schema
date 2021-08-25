@@ -1,3 +1,18 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.google.cloud.solutions.transformation;
 
 import com.google.cloud.solutions.common.IoTCoreMessageInfo;
@@ -13,6 +28,9 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.Map.Entry;
 
+/**
+ * Transforms the JSON payload of PubSub message to {@link TableRowWithMessageInfo}
+ */
 public class PubSubMessageToTableRowMapper extends DoFn<PubSubMessageWithMessageInfo, TableRowWithMessageInfo> {
     private static final String IOT_CORE_ATTRIBUTE_PREFIX = "cloudIoT.attr.";
 
@@ -32,6 +50,13 @@ public class PubSubMessageToTableRowMapper extends DoFn<PubSubMessageWithMessage
         }
     }
 
+    /**
+     * @param payload Parsed JSON payload from PubSub message
+     * @param mapper Field map configuration, where the key is the field identifier of the in payload and value represent the field identifier of the destination Table
+     * @param messageInfo containing IoT Core message attribute and payload message type
+     * @param rows holder for the extract key value mapping, where the key is the field identifier and value is extracted value from payload object
+     * For every key value pair in the mapper, use the key to extract value from messageInfo or payload and populate the value in the rows holder.
+     */
     private void parsePayload(JsonObject payload, JsonObject mapper, IoTCoreMessageInfo messageInfo, List<Map<String, String>> rows ) {
         for(Entry<String, JsonElement> entry : mapper.entrySet()) {
             if (entry.getKey().startsWith(IOT_CORE_ATTRIBUTE_PREFIX)) {
@@ -48,24 +73,28 @@ public class PubSubMessageToTableRowMapper extends DoFn<PubSubMessageWithMessage
         }
     }
 
-    private void parsePayloadField(JsonObject payloadJson, String payloadKey, JsonElement mapKey, IoTCoreMessageInfo messageInfo, List<Map<String, String>> rows) {
+    private void parsePayloadField(JsonObject payloadJson, String payloadKey, JsonElement destinationTableField, IoTCoreMessageInfo messageInfo, List<Map<String, String>> rows) {
         String[] keys = payloadKey.split("\\.");
-        getFieldValue(payloadJson, keys, mapKey, messageInfo, rows);
+        getFieldValue(payloadJson, keys, destinationTableField, messageInfo, rows);
     }
 
-    private void getFieldValue(JsonObject payloadJson, String[] keys, JsonElement mapKey, IoTCoreMessageInfo messageInfo, List<Map<String, String>> rows) {
-        if(keys.length == 1) {
-            if(keys[0].endsWith("[]")) {
+    /**
+     * Traversing down the nested payload object following the path specified in the payloadKeyPath array. Store the extracted value in rows mapper using destinationTableField as key
+     */
+    private void getFieldValue(JsonObject payloadJson, String[] payloadKeyPath, JsonElement destinationTableField, IoTCoreMessageInfo messageInfo, List<Map<String, String>> rows) {
+        if(payloadKeyPath.length == 1) {
+            String currentPayloadKey = payloadKeyPath[0];
+            if(currentPayloadKey.endsWith("[]")) {
                 List<Map<String, String>> rowsHolder = new ArrayList<>();
 
-                for (JsonElement jsonElement : payloadJson.get(keys[0].substring(0, keys[0].length() - 2)).getAsJsonArray()) {
+                for (JsonElement jsonElement : payloadJson.get(currentPayloadKey.substring(0, currentPayloadKey.length() - 2)).getAsJsonArray()) {
                     JsonObject payloadArrayItem = jsonElement.getAsJsonObject();
 
                     for (Map<String, String> rowValues : rows) {
                         Map<String, String> rowCopy = new HashMap<>(rowValues);
                         List<Map<String, String>> rowsCopy = new ArrayList<>();
                         rowsCopy.add(rowCopy);
-                        parsePayload(payloadArrayItem, mapKey.getAsJsonObject(), messageInfo, rowsCopy);
+                        parsePayload(payloadArrayItem, destinationTableField.getAsJsonObject(), messageInfo, rowsCopy);
                         rowsHolder.addAll(rowsCopy);
                     }
                 }
@@ -73,11 +102,11 @@ public class PubSubMessageToTableRowMapper extends DoFn<PubSubMessageWithMessage
                 rows.addAll(rowsHolder);
             } else {
                 for(Map<String, String> rowValues : rows) {
-                    rowValues.put(mapKey.getAsString(), payloadJson.get(keys[0]).getAsString());
+                    rowValues.put(destinationTableField.getAsString(), payloadJson.get(currentPayloadKey).getAsString());
                 }
             }
         } else {
-            getFieldValue(payloadJson.getAsJsonObject(keys[0]), subKeys(keys), mapKey, messageInfo, rows);
+            getFieldValue(payloadJson.getAsJsonObject(payloadKeyPath[0]), subKeys(payloadKeyPath), destinationTableField, messageInfo, rows);
         }
     }
 

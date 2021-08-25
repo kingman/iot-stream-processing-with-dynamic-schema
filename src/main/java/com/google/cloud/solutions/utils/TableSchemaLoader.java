@@ -1,3 +1,18 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.google.cloud.solutions.utils;
 
 import java.util.ArrayList;
@@ -15,6 +30,13 @@ import com.google.gson.JsonParser;
 
 import com.google.common.collect.ImmutableList;
 
+/**
+ * Get
+ * - the destination field schemas
+ * - the destination table schemas
+ * from Cloud IoT Core metadata.
+ * Previous fetched schemas are cached.
+ */
 public class TableSchemaLoader {
     private static final String TABLE_SCHEMA_METADATA_PREFIX = "table-schema-";
     private static final Map<String, TableSchema> schemaCache = new HashMap<>();
@@ -32,7 +54,7 @@ public class TableSchemaLoader {
         if (schemaStr == null) {
             throw new RuntimeException(String.format("No table scheme find for device: %s", cacheKey));
         }
-        TableSchema schema = createScheme(schemaStr);
+        TableSchema schema = createSchema(schemaStr);
         schemaCache.put(cacheKey, schema);
         return schemaCache.get(cacheKey);
 
@@ -68,7 +90,7 @@ public class TableSchemaLoader {
         fieldMapCache.remove(cacheKey);
     }
 
-    private static TableSchema createScheme(String schemaStr) {
+    private static TableSchema createSchema(String schemaStr) {
         JsonArray fields = new JsonParser().parse(schemaStr).getAsJsonArray();
         List<TableFieldSchema> fieldSchemas = createFieldSchemaList(fields);
         return new TableSchema().setFields(ImmutableList.copyOf(fieldSchemas));
