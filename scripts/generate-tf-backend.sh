@@ -121,7 +121,7 @@ echo "Creating a new Google Cloud Storage bucket to store the dataflow template 
 if gsutil ls -b gs://"${DATAFLOW_TEMPLATE_BUCKET}" >/dev/null 2>&1; then
     echo "The ${DATAFLOW_TEMPLATE_BUCKET} Google Cloud Storage bucket already exists."
 else
-    gsutil mb -p "${DATAFLOW_TEMPLATE_BUCKET}" gs://"${DATAFLOW_TEMPLATE_BUCKET}"
+    gsutil mb -p "${GOOGLE_CLOUD_PROJECT}" gs://"${DATAFLOW_TEMPLATE_BUCKET}"
 fi
 
 TERRAFORM_BACKEND_DESCRIPTOR_PATH=terraform/backend.tf
