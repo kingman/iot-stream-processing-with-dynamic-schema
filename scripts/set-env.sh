@@ -16,7 +16,7 @@
 
 if [ -z "${GOOGLE_CLOUD_PROJECT}" ]; then
     echo 'The GOOGLE_CLOUD_PROJECT environment variable that points to the default Google Cloud project is not defined. Terminating...'
-    exit 1
+    return 
 fi
 export GOOGLE_CLOUD_REGION=europe-west1
 export GOOGLE_CLOUD_ZONE=europe-west1-d

@@ -1,30 +1,29 @@
-  
+
 provider "google" {}
-
-resource "google_project_service" "cloud-iot-apis" {
-  project = var.google_project_id
-  service = "cloudiot.googleapis.com"
-
-  disable_dependent_services = true
-  disable_on_destroy         = true
-}
 
 resource "google_project_service" "pubsub-apis" {
   project = var.google_project_id
   service = "pubsub.googleapis.com"
 
-  disable_dependent_services = true
-  disable_on_destroy         = true
+  disable_dependent_services = false
+  disable_on_destroy         = false
 }
 
 resource "google_project_service" "dataflow-apis" {
   project = var.google_project_id
   service = "dataflow.googleapis.com"
 
-  disable_dependent_services = true
-  disable_on_destroy         = true
+  disable_dependent_services = false
+  disable_on_destroy         = false
 }
 
+resource "google_project_service" "cloud-iot-apis" {
+  project = var.google_project_id
+  service = "cloudiot.googleapis.com"
+
+  disable_dependent_services = false
+  disable_on_destroy         = false
+}
 
 resource "google_pubsub_topic" "default-telemetry" {
   name    = "default-telemetry"
@@ -60,31 +59,37 @@ resource "google_cloudiot_registry" "device-registry" {
 }
 
 locals {
+  # BigQuery table schemas where the data is stored. One schema per message type.
   metadata_table_schemas = {
     for dataType in var.data_type_configuration:
       dataType.schema_key=>file(dataType.schema_path)
   }
 
+  # BigQuery datasets where the data is stored. One dataset per message type.
   metadata_destination_datasets = {
     for dataType in var.data_type_configuration:
       dataType.dataset_key=>dataType.destination_dataset
   }
 
+  # BigQuery tables where the data is stored. One table per message type.
   metadata_destination_tables = {
     for dataType in var.data_type_configuration:
       dataType.table_key=>dataType.destination_table
   }
 
+  # Schema map configuration, one per message type.
   metadata_schema_maps = {
     for dataType in var.data_type_configuration:
       dataType.schema_map_key=>file(dataType.schema_map_path)
     if dataType.id != "unknown-message"
   }
 
+  # Input data validation schemas, one per message type.
   metadata_input_data_schemas = {
     input-data-schemas = file(var.input_data_schemas_path)
   }
 
+  # All the configurations are merged together and stored as metadata on the IoT Core device.
   iot_device_metadata = merge(local.metadata_table_schemas, local.metadata_destination_tables, local.metadata_destination_datasets, local.metadata_schema_maps, local.metadata_input_data_schemas)
 }
 
@@ -114,7 +119,7 @@ resource "google_dataflow_job" "streaming-processing" {
         numWorkers = 1
         inputTopic = google_pubsub_topic.default-telemetry.id
     }
-    
+
     depends_on = [
         google_pubsub_topic.default-telemetry,
         google_project_service.dataflow-apis,

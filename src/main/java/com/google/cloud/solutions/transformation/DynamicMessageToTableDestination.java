@@ -25,23 +25,25 @@ import org.apache.beam.sdk.io.gcp.bigquery.TableDestination;
 import org.apache.beam.sdk.values.ValueInSingleWindow;
 
 /**
- * Determines the BigQuery destination where the message is written to based on the determined message type.
+ * Determines the BigQuery destination where the message is written to based on the determined
+ * message type.
  */
-public class DynamicMessageToTableDestination extends DynamicDestinations<TableRowWithMessageInfo, IoTCoreMessageInfo> {
-    private static final long serialVersionUID = -1519270901335637794L;
+public class DynamicMessageToTableDestination
+    extends DynamicDestinations<TableRowWithMessageInfo, IoTCoreMessageInfo> {
+  private static final long serialVersionUID = -1519270901335637794L;
 
-    @Override
-    public IoTCoreMessageInfo getDestination(ValueInSingleWindow<TableRowWithMessageInfo> element) {
-        return element.getValue().getMessageInfo();
-    }
+  @Override
+  public IoTCoreMessageInfo getDestination(ValueInSingleWindow<TableRowWithMessageInfo> element) {
+    return element.getValue().getMessageInfo();
+  }
 
-    @Override
-    public TableDestination getTable(IoTCoreMessageInfo messageInfo) {
-        return TableDestinationLoader.getDestination(messageInfo);
-    }
+  @Override
+  public TableDestination getTable(IoTCoreMessageInfo messageInfo) {
+    return TableDestinationLoader.getDestination(messageInfo);
+  }
 
-    @Override
-    public TableSchema getSchema(IoTCoreMessageInfo messageInfo) {
-        return TableSchemaLoader.getSchema(messageInfo);
-    }
+  @Override
+  public TableSchema getSchema(IoTCoreMessageInfo messageInfo) {
+    return TableSchemaLoader.getSchema(messageInfo);
+  }
 }

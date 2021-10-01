@@ -17,72 +17,72 @@
 # Check if the necessary dependencies are available
 if ! command -v gsutil >/dev/null 2>&1; then
     echo "gsutil command is not available, but it's needed. Terminating..."
-    exit 1
+    return
 fi
 
 if [ -z "${TF_SERVICE_ACCOUNT_NAME}" ]; then
     echo 'The TF_SERVICE_ACCOUNT_NAME environment variable that points to the Google Cloud service account that Terraform will use is not defined. Terminating...'
-    exit 1
+    return
 fi
 
 if [ -z "${TF_STATE_PROJECT}" ]; then
     echo 'The TF_STATE_PROJECT environment variable that points to the Google Cloud project to store the Terraform state is not defined. Terminating...'
-    exit 1
+    return
 fi
 
 if [ -z "${TF_STATE_BUCKET}" ]; then
     echo 'The TF_STATE_BUCKET environment variable that points to the Google Cloud Storage bucket to store the Terraform state is not defined. Terminating...'
-    exit 1
+    return
 fi
 
 if [ -z "${GOOGLE_CLOUD_PROJECT}" ]; then
     echo 'The GOOGLE_CLOUD_PROJECT environment variable that points to the default Google Cloud project that Terraform will provision the resources in is not defined. Terminating...'
-    exit 1
+    return
 fi
 
 if [ -z "${GOOGLE_CLOUD_REGION}" ]; then
     echo 'The GOOGLE_CLOUD_REGION environment variable that points to the default Google Cloud region that Terraform will provision the resources in is not defined. Terminating...'
-    exit 1
+    return
 fi
 
 if [ -z "${GOOGLE_CLOUD_ZONE}" ]; then
     echo 'The GOOGLE_CLOUD_ZONE environment variable that points to the default Google Cloud zone that Terraform will provision the resources in is not defined. Terminating...'
-    exit 1
+    return
 fi
 
 if [ -z "${IOT_REGISTRY_ID}" ]; then
     echo 'The IOT_REGISTRY_ID environment variable that states the IoT Core registry id that Terraform will use is not defined. Terminating...'
-    exit 1
+    return
 fi
 
 if [ -z "${IOT_DEVICE_ID}" ]; then
     echo 'The IOT_DEVICE_ID environment variable that states the IoT Core device id that Terraform will use is not defined. Terminating...'
-    exit 1
+    return
 fi
 
 if [ -z "${GOOGLE_APPLICATION_CREDENTIALS}" ]; then
     echo 'The GOOGLE_APPLICATION_CREDENTIALS environment variable that points to the default Google Cloud application credentials that Terraform will use is not defined. Terminating...'
-    exit 1
+    return
 fi
 
 if [ -z "${DATAFLOW_TEMPLATE_BUCKET}" ]; then
     echo 'The DATAFLOW_TEMPLATE_BUCKET environment variable that points to the Google Cloud Storage bucket to store and stage dataflow template is not defined. Terminating...'
-    exit 1
+    return
 fi
 
 if [ -z "${BIGQUERY_DATASET_ID}" ]; then
     echo 'The BIGQUERY_DATASET_ID environment variable that points to the Google Cloud BigQuery dataset is not defined. Terminating...'
-    exit 1
+    return
 fi
 
 if [ -z "${BIGQUERY_METRICS_TABLE_ID}" ]; then
     echo 'The BIGQUERY_METRICS_TABLE_ID environment variable that points to the Google Cloud BigQuery table is not defined. Terminating...'
-    exit 1
+    return
 fi
 
 if [ -z "${BIGQUERY_UNKNOWN_MESSAGE_TABLE_ID}" ]; then
     echo 'The BIGQUERY_UNKNOWN_MESSAGE_TABLE_ID environment variable that points to the Google Cloud BigQuery table is not defined. Terminating...'
-    exit 1
+    return
 fi
 
 echo "Setting the default Google Cloud project to ${TF_STATE_PROJECT}"

@@ -22,32 +22,34 @@ import org.apache.beam.sdk.transforms.DoFn;
 import org.apache.beam.sdk.values.TupleTag;
 
 /**
- * Validate each {@link PubsubMessage} using {@link InputDataSchemaValidator} and branches the input message stream into
- * - known message stream, with positively validated messages
- * - unknown message stream, with negatively validated messages
+ * Validate each {@link PubsubMessage} using {@link InputDataSchemaValidator} and branches the input
+ * message stream into - known message stream, with positively validated messages - unknown message
+ * stream, with negatively validated messages
  */
 public class IoTMessageSchemaValidation extends DoFn<PubsubMessage, PubSubMessageWithMessageInfo> {
 
-    private static final long serialVersionUID = 1L;
-    private final TupleTag<PubSubMessageWithMessageInfo> knownMessageTag;
-    private final TupleTag<PubSubMessageWithMessageInfo> unknownMessageTag;
-    private final InputDataSchemaValidator inputDataSchemaValidator;
+  private static final long serialVersionUID = 1L;
+  private final TupleTag<PubSubMessageWithMessageInfo> knownMessageTag;
+  private final TupleTag<PubSubMessageWithMessageInfo> unknownMessageTag;
+  private final InputDataSchemaValidator inputDataSchemaValidator;
 
+  public IoTMessageSchemaValidation(
+      TupleTag<PubSubMessageWithMessageInfo> knownMessageTag,
+      TupleTag<PubSubMessageWithMessageInfo> unknownMessageTag) {
+    this.knownMessageTag = knownMessageTag;
+    this.unknownMessageTag = unknownMessageTag;
+    this.inputDataSchemaValidator = new InputDataSchemaValidator();
+  }
 
-    public IoTMessageSchemaValidation(TupleTag<PubSubMessageWithMessageInfo> knownMessageTag, TupleTag<PubSubMessageWithMessageInfo> unknownMessageTag) {
-        this.knownMessageTag = knownMessageTag;
-        this.unknownMessageTag = unknownMessageTag;
-        this.inputDataSchemaValidator = new InputDataSchemaValidator();
+  @ProcessElement
+  public void processElement(ProcessContext context) {
+    PubSubMessageWithMessageInfo messageWithInfo =
+        new PubSubMessageWithMessageInfo(context.element());
+
+    if (inputDataSchemaValidator.apply(messageWithInfo)) {
+      context.output(knownMessageTag, messageWithInfo);
+    } else {
+      context.output(unknownMessageTag, messageWithInfo);
     }
-
-    @ProcessElement
-    public void processElement(ProcessContext context) {
-        PubSubMessageWithMessageInfo messageWithInfo = new PubSubMessageWithMessageInfo(context.element());
-
-        if(inputDataSchemaValidator.apply(messageWithInfo)) {
-            context.output(knownMessageTag, messageWithInfo);
-        } else {
-            context.output(unknownMessageTag, messageWithInfo);
-        }
-    }
+  }
 }

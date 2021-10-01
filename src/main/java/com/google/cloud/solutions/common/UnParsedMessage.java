@@ -18,27 +18,27 @@ package com.google.cloud.solutions.common;
 import java.io.Serializable;
 
 /**
- * POJO holder of PubSub message as string together with the parsed message attributes in {@link IoTCoreMessageInfo}
+ * POJO holder of PubSub message as string together with the parsed message attributes in {@link
+ * IoTCoreMessageInfo}
  */
 public class UnParsedMessage implements Serializable {
-    private static final long serialVersionUID = 1L;
-    private IoTCoreMessageInfo messageInfo;
-    private String message;
+  private static final long serialVersionUID = 1L;
+  private IoTCoreMessageInfo messageInfo;
+  private String message;
 
-    public IoTCoreMessageInfo getMessageInfo() {
-        return messageInfo;
-    }
+  public IoTCoreMessageInfo getMessageInfo() {
+    return messageInfo;
+  }
 
-    public void setMessageInfo(IoTCoreMessageInfo messageInfo) {
-        this.messageInfo = messageInfo;
-    }
+  public void setMessageInfo(IoTCoreMessageInfo messageInfo) {
+    this.messageInfo = messageInfo;
+  }
 
-    public String getMessage() {
-        return message;
-    }
+  public String getMessage() {
+    return message;
+  }
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
+  public void setMessage(String message) {
+    this.message = message;
+  }
 }

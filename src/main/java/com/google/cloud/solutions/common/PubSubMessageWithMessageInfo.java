@@ -16,28 +16,28 @@
 package com.google.cloud.solutions.common;
 
 import com.google.cloud.solutions.utils.PubSubMessageUtil;
+import java.io.Serializable;
 import org.apache.beam.sdk.io.gcp.pubsub.PubsubMessage;
 
-import java.io.Serializable;
-
 /**
- * POJO holder of raw data from a PubSub message together with the parsed message attributes in {@link IoTCoreMessageInfo}
+ * POJO holder of raw data from a PubSub message together with the parsed message attributes in
+ * {@link IoTCoreMessageInfo}
  */
 public class PubSubMessageWithMessageInfo implements Serializable {
-    private static final long serialVersionUID = -6308181018759264260L;
-    private final IoTCoreMessageInfo messageInfo;
-    private final byte[] payload;
+  private static final long serialVersionUID = -6308181018759264260L;
+  private final IoTCoreMessageInfo messageInfo;
+  private final byte[] payload;
 
-    public PubSubMessageWithMessageInfo(final PubsubMessage pubsubMessage) {
-        this.messageInfo = PubSubMessageUtil.extractIoTCoreMessageInfo(pubsubMessage);
-        this.payload = pubsubMessage.getPayload();
-    }
+  public PubSubMessageWithMessageInfo(final PubsubMessage pubsubMessage) {
+    this.messageInfo = PubSubMessageUtil.extractIoTCoreMessageInfo(pubsubMessage);
+    this.payload = pubsubMessage.getPayload();
+  }
 
-    public byte[] getPayload() {
-        return payload;
-    }
+  public byte[] getPayload() {
+    return payload;
+  }
 
-    public IoTCoreMessageInfo getMessageInfo() {
-        return messageInfo;
-    }
+  public IoTCoreMessageInfo getMessageInfo() {
+    return messageInfo;
+  }
 }

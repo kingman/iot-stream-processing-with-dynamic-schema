@@ -20,34 +20,34 @@ import com.google.cloud.solutions.common.IoTCoreMessageInfo;
 import com.google.cloud.solutions.common.UnParsedMessage;
 import com.google.cloud.solutions.utils.TableDestinationLoader;
 import com.google.cloud.solutions.utils.TableSchemaLoader;
-
 import org.apache.beam.sdk.io.gcp.bigquery.DynamicDestinations;
 import org.apache.beam.sdk.io.gcp.bigquery.TableDestination;
 import org.apache.beam.sdk.values.ValueInSingleWindow;
 
 /**
- * Determines the BigQuery destination for unknown messages. Name of the dataset and the table are read from configuration
+ * Determines the BigQuery destination for unknown messages. Name of the dataset and the table are
+ * read from configuration
  */
-public class UnParsedMessageToTableDestination extends DynamicDestinations<UnParsedMessage, IoTCoreMessageInfo> {
+public class UnParsedMessageToTableDestination
+    extends DynamicDestinations<UnParsedMessage, IoTCoreMessageInfo> {
 
-    private static final long serialVersionUID = 1L;
-    private static final String MESSAGE_TYPE = "unknown-message";
+  private static final long serialVersionUID = 1L;
+  private static final String MESSAGE_TYPE = "unknown-message";
 
-    @Override
-    public IoTCoreMessageInfo getDestination(ValueInSingleWindow<UnParsedMessage> element) {
-        return element.getValue().getMessageInfo();
-    }
+  @Override
+  public IoTCoreMessageInfo getDestination(ValueInSingleWindow<UnParsedMessage> element) {
+    return element.getValue().getMessageInfo();
+  }
 
-    @Override
-    public TableDestination getTable(IoTCoreMessageInfo messageInfo) {
-        messageInfo.setMessageType(MESSAGE_TYPE);
-        return TableDestinationLoader.getDestination(messageInfo);
-    }
+  @Override
+  public TableDestination getTable(IoTCoreMessageInfo messageInfo) {
+    messageInfo.setMessageType(MESSAGE_TYPE);
+    return TableDestinationLoader.getDestination(messageInfo);
+  }
 
-    @Override
-    public TableSchema getSchema(IoTCoreMessageInfo messageInfo) {
-        messageInfo.setMessageType(MESSAGE_TYPE);
-        return TableSchemaLoader.getSchema(messageInfo);
-    }
-
+  @Override
+  public TableSchema getSchema(IoTCoreMessageInfo messageInfo) {
+    messageInfo.setMessageType(MESSAGE_TYPE);
+    return TableSchemaLoader.getSchema(messageInfo);
+  }
 }

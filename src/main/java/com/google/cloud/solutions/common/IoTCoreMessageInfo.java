@@ -19,81 +19,84 @@ import java.io.Serializable;
 
 /**
  * POJO holder of the specific PubSub message attributes that are populated by Cloud IoT Core
- * @see <a href="https://cloud.google.com/iot/docs/how-tos/mqtt-bridge#publishing_telemetry_events">Cloud IoT Core doc</a>
+ *
+ * @see <a
+ *     href="https://cloud.google.com/iot/docs/how-tos/mqtt-bridge#publishing_telemetry_events">Cloud
+ *     IoT Core doc</a>
  */
 public class IoTCoreMessageInfo implements Serializable {
-    private static final long serialVersionUID = -6129094259910824985L;
+  private static final long serialVersionUID = -6129094259910824985L;
 
-    private String deviceNumId;
-    private String deviceId;
-    private String deviceRegistryId;
-    private String deviceRegistryLocation;
-    private String projectId;
-    private String subFolder;
-    private String messageType;
-    private String messageId;
+  private String deviceNumId;
+  private String deviceId;
+  private String deviceRegistryId;
+  private String deviceRegistryLocation;
+  private String projectId;
+  private String subFolder;
+  private String messageType;
+  private String messageId;
 
-    public String getDeviceNumId() {
-        return deviceNumId;
-    }
+  public String getDeviceNumId() {
+    return deviceNumId;
+  }
 
-    public void setDeviceNumId(String deviceNumId) {
-        this.deviceNumId = deviceNumId;
-    }
+  public void setDeviceNumId(String deviceNumId) {
+    this.deviceNumId = deviceNumId;
+  }
 
-    public String getDeviceId() {
-        return deviceId;
-    }
+  public String getDeviceId() {
+    return deviceId;
+  }
 
-    public void setDeviceId(String deviceId) {
-        this.deviceId = deviceId;
-    }
+  public void setDeviceId(String deviceId) {
+    this.deviceId = deviceId;
+  }
 
-    public String getDeviceRegistryId() {
-        return deviceRegistryId;
-    }
+  public String getDeviceRegistryId() {
+    return deviceRegistryId;
+  }
 
-    public void setDeviceRegistryId(String deviceRegistryId) {
-        this.deviceRegistryId = deviceRegistryId;
-    }
+  public void setDeviceRegistryId(String deviceRegistryId) {
+    this.deviceRegistryId = deviceRegistryId;
+  }
 
-    public String getDeviceRegistryLocation() {
-        return deviceRegistryLocation;
-    }
+  public String getDeviceRegistryLocation() {
+    return deviceRegistryLocation;
+  }
 
-    public void setDeviceRegistryLocation(String deviceRegistryLocation) {
-        this.deviceRegistryLocation = deviceRegistryLocation;
-    }
+  public void setDeviceRegistryLocation(String deviceRegistryLocation) {
+    this.deviceRegistryLocation = deviceRegistryLocation;
+  }
 
-    public String getProjectId() {
-        return projectId;
-    }
+  public String getProjectId() {
+    return projectId;
+  }
 
-    public void setProjectId(String projectId) {
-        this.projectId = projectId;
-    }
+  public void setProjectId(String projectId) {
+    this.projectId = projectId;
+  }
 
-    public String getSubFolder() {
-        return subFolder;
-    }
+  public String getSubFolder() {
+    return subFolder;
+  }
 
-    public void setSubFolder(String subFolder) {
-        this.subFolder = subFolder;
-    }
+  public void setSubFolder(String subFolder) {
+    this.subFolder = subFolder;
+  }
 
-    public String getMessageType() {
-        return messageType;
-    }
+  public String getMessageType() {
+    return messageType;
+  }
 
-    public void setMessageType(String messageType) {
-        this.messageType = messageType;
-    }
+  public void setMessageType(String messageType) {
+    this.messageType = messageType;
+  }
 
-    public String getMessageId() {
-        return messageId;
-    }
+  public String getMessageId() {
+    return messageId;
+  }
 
-    public void setMessageId(String messageId) {
-        this.messageId = messageId;
-    }
+  public void setMessageId(String messageId) {
+    this.messageId = messageId;
+  }
 }

@@ -19,25 +19,26 @@ import java.io.Serializable;
 import java.util.Map;
 
 /**
- * POJO holder of a BigQuery table row in a string to string map together with the IoT Core message attributes in {@link IoTCoreMessageInfo}
- * The map key is the field name
- * The map value is the string representation of the field value
+ * POJO holder of a BigQuery table row in a string to string map together with the IoT Core message
+ * attributes in {@link IoTCoreMessageInfo} The map key is the field name The map value is the
+ * string representation of the field value
  */
 public class TableRowWithMessageInfo implements Serializable {
-    private static final long serialVersionUID = 5038761469411530015L;
-    private final IoTCoreMessageInfo messageInfo;
-    private final Map<String, String> tableRowMap;
+  private static final long serialVersionUID = 5038761469411530015L;
+  private final IoTCoreMessageInfo messageInfo;
+  private final Map<String, String> tableRowMap;
 
-    public TableRowWithMessageInfo(final IoTCoreMessageInfo messageInfo, final Map<String, String> tableRowMap) {
-        this.messageInfo = messageInfo;
-        this.tableRowMap = tableRowMap;
-    }
+  public TableRowWithMessageInfo(
+      final IoTCoreMessageInfo messageInfo, final Map<String, String> tableRowMap) {
+    this.messageInfo = messageInfo;
+    this.tableRowMap = tableRowMap;
+  }
 
-    public IoTCoreMessageInfo getMessageInfo() {
-        return messageInfo;
-    }
+  public IoTCoreMessageInfo getMessageInfo() {
+    return messageInfo;
+  }
 
-    public Map<String, String> getTableRowMap() {
-        return tableRowMap;
-    }
+  public Map<String, String> getTableRowMap() {
+    return tableRowMap;
+  }
 }

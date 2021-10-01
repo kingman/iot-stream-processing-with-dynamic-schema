@@ -16,12 +16,12 @@
 
 if [ -z "${GOOGLE_CLOUD_PROJECT}" ]; then
     echo 'The GOOGLE_CLOUD_PROJECT environment variable that points to the Google Cloud project is not defined. Terminating...'
-    exit 1
+    return
 fi
 
 if [ -z "${DATAFLOW_TEMPLATE_BUCKET}" ]; then
     echo 'The DATAFLOW_TEMPLATE_BUCKET environment variable that points to the Google Cloud Storage bucket to store and stage dataflow template is not defined. Terminating...'
-    exit 1
+    return
 fi
 
 docker run -it --rm --name my-maven-project -v "$(pwd)":/usr/src/mymaven -w /usr/src/mymaven maven:3.6.3-jdk-11 mvn compile exec:java -Dexec.mainClass=com.google.cloud.solutions.IoTStreamDynamicMapping -Dexec.args="\
